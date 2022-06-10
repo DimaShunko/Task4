@@ -11,6 +11,7 @@ public class FindBookByAuthor implements  Command{
 
     @Override
     public void exec(Statement statement) throws SQLException {
+        boolean b = false;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Введите книгу");
         System.out.print("Книгу: ");
@@ -18,6 +19,10 @@ public class FindBookByAuthor implements  Command{
         ResultSet result = statement.executeQuery("SELECT author FROM library WHERE author = '" + book + "'");
         while (result.next()){
             System.out.println("AUTHOR " + result.getString(1));
+            b =true;
+        }
+        if(!b){
+            System.out.println("Такой книги нет");
         }
 
     }
