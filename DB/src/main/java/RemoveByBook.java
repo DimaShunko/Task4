@@ -23,18 +23,6 @@ public class RemoveByBook implements Command {
         System.out.print("Книга: ");
         String book = scanner.nextLine();
 
-        result = statement.executeQuery("SELECT COUNT(idAuthor) num,idAuthor FROM tableC WHERE idAuthor IN (SELECT idAuthor FROM tableC WHERE (idBook = (SELECT id FROM tableB WHERE book = '" + book + "'))) GROUP BY idAuthor;");
-
-        while (result.next()) {
-            if (result.getInt(1) == 1) {
-                idAuthorDelete.add(result.getInt(2));
-            }
-        }
-
-        for (Integer idAuthor : idAuthorDelete) {
-            statement.execute("DELETE FROM tableA WHERE id = '" + idAuthor + "';");
-        }
-
         result = statement.executeQuery("SELECT book FROM tableB WHERE book = '" + book + "';");
 
         while (result.next()) {
@@ -42,6 +30,18 @@ public class RemoveByBook implements Command {
         }
 
         if (b) {
+            result = statement.executeQuery("SELECT COUNT(idAuthor) num,idAuthor FROM tableC WHERE idAuthor IN (SELECT idAuthor FROM tableC WHERE (idBook = (SELECT id FROM tableB WHERE book = '" + book + "'))) GROUP BY idAuthor;");
+
+            while (result.next()) {
+                if (result.getInt(1) == 1) {
+                    idAuthorDelete.add(result.getInt(2));
+                }
+            }
+
+            for (Integer idAuthor : idAuthorDelete) {
+                statement.execute("DELETE FROM tableA WHERE id = '" + idAuthor + "';");
+            }
+
             statement.execute("DELETE FROM tableB WHERE book = '" + book + "';");
         } else {
             System.out.println("Такой книги нет");

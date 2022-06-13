@@ -23,19 +23,6 @@ public class RemoveByAuthor implements Command {
         System.out.print("Автор: ");
         String author = scanner.nextLine();
 
-        result = statement.executeQuery("SELECT COUNT(idBook) num,idBook FROM tableC WHERE idBook IN (SELECT idBook FROM tableC WHERE (idAuthor = (SELECT id FROM tableA WHERE author = '" + author + "'))) GROUP BY idBook;");
-
-        while (result.next()) {
-            if (result.getInt(1) == 1) {
-                idBookDelete.add(result.getInt(2));
-            }
-        }
-
-        for (Integer idBook : idBookDelete) {
-            statement.execute("DELETE FROM tableB WHERE id = '" + idBook + "';");
-        }
-
-
         result = statement.executeQuery("SELECT author FROM tableA WHERE author = '" + author + "';");
 
         while (result.next()) {
@@ -43,6 +30,18 @@ public class RemoveByAuthor implements Command {
         }
 
         if (b) {
+            result = statement.executeQuery("SELECT COUNT(idBook) num,idBook FROM tableC WHERE idBook IN (SELECT idBook FROM tableC WHERE (idAuthor = (SELECT id FROM tableA WHERE author = '" + author + "'))) GROUP BY idBook;");
+
+            while (result.next()) {
+                if (result.getInt(1) == 1) {
+                    idBookDelete.add(result.getInt(2));
+                }
+            }
+
+            for (Integer idBook : idBookDelete) {
+                statement.execute("DELETE FROM tableB WHERE id = '" + idBook + "';");
+            }
+
             statement.execute("DELETE FROM tableA WHERE author = '" + author + "';");
         } else {
             System.out.println("Такого автора нет");
